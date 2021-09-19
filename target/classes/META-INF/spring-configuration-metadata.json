@@ -1,0 +1,11 @@
+{
+  "groups": [
+    {
+      "name": "",
+      "type": "com.app.manager.ConnectionManager",
+      "sourceType": "com.app.manager.ConnectionManager"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}
