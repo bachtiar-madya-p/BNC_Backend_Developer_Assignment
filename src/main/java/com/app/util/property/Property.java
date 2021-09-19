@@ -12,5 +12,7 @@ public class Property {
     public static final String DB_USER = "db.user";
     public static final String DB_PASS = "db.password";
     public static final String DB_URL = "db.jdbc.url";
+
+
     
 }
