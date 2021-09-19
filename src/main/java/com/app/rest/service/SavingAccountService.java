@@ -72,27 +72,17 @@ public class SavingAccountService extends BaseService {
 
         UserSavingAccountResponse accountResponse = new UserSavingAccountResponse();
 
-        if (savingAccountController.validateUser(userId)) {
+        List<SavingAccount> savingAccounts = new ArrayList<>();
+        List<SavingAccountDetails> savingAccountDetailsList = savingAccountController.getSavingDetailListById(userId);
 
-            List<SavingAccount> savingAccounts = new ArrayList<>();
-            List<SavingAccountDetails> savingAccountDetailsList = savingAccountController.getSavingDetailListById(userId);
+        SavingAccount savingAccount = new SavingAccount(savingAccountDetailsList);
+        savingAccounts.add(savingAccount);
 
-            SavingAccount savingAccount = new SavingAccount(savingAccountDetailsList);
-            savingAccounts.add(savingAccount);
+        accountResponse.setSavingAccountList(savingAccounts);
+        log.debug(methodName, "Response : " + JsonHelper.toJson(accountResponse));
 
-            accountResponse.setSavingAccountList(savingAccounts);
-            log.debug(methodName, "Response : " + JsonHelper.toJson(accountResponse));
+        response = buildResponse(HttpStatus.OK, accountResponse);
 
-            response = buildResponse(HttpStatus.OK, accountResponse);
-        } else {
-            accountResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-            accountResponse.setDescription("User Not Found");
-            accountResponse.setSavingAccountList(null);
-
-            log.error(methodName, "Response : " + JsonHelper.toJson(accountResponse));
-
-            response = buildResponse(HttpStatus.BAD_REQUEST, accountResponse);
-        }
 
         completed(methodName);
         return response;
@@ -109,13 +99,10 @@ public class SavingAccountService extends BaseService {
             if (userController.validateUserById(body.getUserId())) {
                 body.setCreateDt(DateHelper.formatDateTime(LocalDateTime.now()));
 
-                if(savingAccountController.insertSavingAccount(body))
-                {
+                if (savingAccountController.insertSavingAccount(body)) {
                     log.debug(methodName, "Saving account added");
                     response = buildResponse(HttpStatus.OK, body);
-                }
-                else
-                {
+                } else {
                     log.error(methodName, "Error add saving account");
                     response = buildErrorResponse("Error Adding Saving Account!!");
                 }
@@ -137,8 +124,8 @@ public class SavingAccountService extends BaseService {
         log.debug(methodName, "Request : " + JsonHelper.toJson(body));
         ResponseEntity response = buildErrorResponse("Bad Request");
         if (validator.validateCalculation(body)) {
-           double grandTotal = body.getMonthlyDepositAmount() * body.getTenor();
-           double calculate = calculateGrandTotal(body.getTenor(), grandTotal);
+            double grandTotal = body.getMonthlyDepositAmount() * body.getTenor();
+            double calculate = calculateGrandTotal(body.getTenor(), grandTotal);
 
             CalculateSavingAccountResponse entity = new CalculateSavingAccountResponse();
             entity.setPurpose(body.getPurpose());
