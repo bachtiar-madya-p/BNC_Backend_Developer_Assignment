@@ -52,6 +52,21 @@ public class UserController extends BaseController{
         return result;
     }
 
+    public boolean validateUserById(String userId) {
+        String methodName = "validateUser";
+        start(methodName);
+        boolean result = false;
+        final String sql = VALIDATE_QUERY + "WHERE user_id = :userId;";
+
+        try (Handle handle = getHandle(); Query query = handle.createQuery(sql)) {
+            result = query.bind("userId", userId).mapTo(Boolean.class).findOnly();
+        } catch (SQLException e) {
+            log.error(methodName, e.getMessage());
+        }
+        completed(methodName);
+        return result;
+    }
+
     public String getSalt(String email) {
         final String methodName = "getSalt";
         start(methodName);
